@@ -1,12 +1,19 @@
 "use strict";
 
-var simplesmtp = require("simplesmtp"),
+var simplesmtp = require("../index"),
     fs = require("fs");
 
 var allowedRecipientDomains = ["node.ee", "neti.ee"];
 
 var smtp = simplesmtp.createServer();
-smtp.listen(25);
+smtp.listen(25, function(err){
+    if(!err){
+        console.log("SMTP server listening on port 25");
+    }else{
+        console.log("Could not start server on port 25. Ports under 1000 require root privileges.");
+        console.log(err.message);
+    }
+});
 
 // Set up recipient validation function
 smtp.on("validateRecipient", function(connection, email, done){

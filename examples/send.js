@@ -1,6 +1,6 @@
 var simplesmtp = require('../index');
 
-mail('sender@example.com', 'receiver@example.com', 'subject: test\r\n\r\nhello world!');
+mail('ludddddd@gmail.com', 'sdddddddy@gmail.com', 'subject: test\r\n\r\nhello world!');
 
 /**
  * Send a raw email
@@ -13,8 +13,8 @@ function mail(from, to, message) {
     var client = simplesmtp.connect(465, 'smtp.gmail.com', {
         secureConnection: true,
         auth: {
-            user: 'gmail.username@gmail.com',
-            pass: 'gmail_pass'
+            user: 'passowed@gmail.com',
+            pass: 'password'
         },
         debug: true
     });
