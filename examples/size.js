@@ -12,7 +12,7 @@ var maxMessageSize = 10000;
 var smtp = simplesmtp.createServer({
     maxSize: maxMessageSize, // maxSize must be set in order to support SIZE
     disableDNSValidation: true,
-    debug: true
+    //debug: true
 });
 smtp.listen(25);
 
@@ -20,7 +20,8 @@ smtp.listen(25);
 mailparser.on("end", function(mail_object){
     console.log("From:", mail_object.from); //[{address:'sender@example.com',name:'Sender Name'}]
     console.log("Subject:", mail_object.subject); // Hello world!
-    console.log("Text body:", mail_object.text); // How are you today?
+    console.log("Text body:", mail_object.html); // How are you today?
+    console.log("HTML body:", mail_object.html); // How are you today?
 });
 
 
