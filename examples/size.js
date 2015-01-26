@@ -1,11 +1,13 @@
 "use strict";
 
 var simplesmtp = require("../index"),
-    fs = require("fs");
+    fs = require("fs"),
+    MailParser = require("mailparser").MailParser,
+    mailparser = new MailParser();
 
 // Example for http://tools.ietf.org/search/rfc1870
 
-var maxMessageSize = 10;
+var maxMessageSize = 10000;
 
 var smtp = simplesmtp.createServer({
     maxSize: maxMessageSize, // maxSize must be set in order to support SIZE
@@ -14,34 +16,17 @@ var smtp = simplesmtp.createServer({
 });
 smtp.listen(25);
 
-// Set up sender validation function
-smtp.on("validateSender", function(connection, email, done){
-    console.log(1, connection.messageSize, maxMessageSize);
-    // SIZE value can be found from connection.messageSize
-    if(connection.messageSize > maxMessageSize){
-        var err = new Error("Max space reached");
-        err.SMTPResponse = "452 This server can only accept messages up to " + maxMessageSize + " bytes";
-        done(err);
-    }else{
-        done();
-    }
+// setup an event listener when the parsing finishes
+mailparser.on("end", function(mail_object){
+    console.log("From:", mail_object.from); //[{address:'sender@example.com',name:'Sender Name'}]
+    console.log("Subject:", mail_object.subject); // Hello world!
+    console.log("Text body:", mail_object.text); // How are you today?
 });
 
-// Set up recipient validation function
-smtp.on("validateRecipient", function(connection, email, done){
-    // Allow only messages up to 100 bytes
-    if(connection.messageSize > 100){
-        var err = new Error("Max space reached");
-        err.SMTPResponse = "552 Channel size limit exceeded: " + email;
-        done(err);
-    }else{
-        done();
-    }
-});
 
 smtp.on("startData", function(connection){
     connection.messageSize = 0;
-    connection.saveStream = fs.createWriteStream("/tmp/message.txt");
+    connection.saveStream = mailparser;
 });
 
 smtp.on("data", function(connection, chunk){
